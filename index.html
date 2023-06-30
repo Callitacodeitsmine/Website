@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Form</title>
+  <style>
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" required><br><br>
+    <input type="submit" value="Login">
+  </form>
+
+  <div id="dataEntryForm" style="display: none;">
+    <h2>Data Entry Form</h2>
+    <form id="customerForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" required><br><br>
+      <label for="email">Email:</label>
+      <input type="email" id="email" required><br><br>
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+
+  <div id="dataDisplay" style="display: none;">
+    <h2>Data Display</h2>
+    <table id="customerTable">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    // Dummy user credentials
+    const users = {
+      admin: 'admin',
+      customer1: 'customer1',
+      customer2: 'customer2'
+    };
+
+    // Validation regular expressions
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    // Get form elements
+    const loginForm = document.getElementById('loginForm');
+    const customerForm = document.getElementById('customerForm');
+    const dataEntryForm = document.getElementById('dataEntryForm');
+    const dataDisplay = document.getElementById('dataDisplay');
+    const customerTable = document.getElementById('customerTable');
+
+    // Event listener for login form submission
+    loginForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (users.hasOwnProperty(username) && users[username] === password) {
+        if (username === 'admin') {
+          loadAdminData();
+        } else {
+          loadCustomerData();
+        }
+      } else {
+        alert('Invalid username or password.');
+      }
+    });
+
+    // Event listener for customer form submission
+    customerForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+
+      if (!validateName(name) || !validateEmail(email)) {
+        return;
+      }
+
+      // Store customer data in MySQL (Backend implementation required)
+      storeCustomerData(name, email);
+
+      // Clear form inputs
+      customerForm.reset();
+    });
+
+    // Function to validate name
+    function validateName(name) {
+      if (!nameRegex.test(name)) {
+        alert('Name must contain only alphabets and spaces.');
+        return false;
+      }
+      return true;
+    }
+
+    // Function to validate email
+    function validateEmail(email) {
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return false;
+      }
+      return true;
+    }
+
+    // Function to load customer data (dummy data)
+    function loadCustomerData() {
+      dataEntryForm.style.display = 'block';
+      customerTable.innerHTML = '';
+    }
+
+    // Function to load admin data (dummy data)
+    function loadAdminData() {
+      dataDisplay.style.display = 'block';
+      customerTable.innerHTML = '';
+      const dummyData = [
+        { name: 'John Doe', email: 'johndoe@example.com' },
+        { name: 'Jane Smith', email: 'janesmith@example.com' }
+      ];
+      dummyData.forEach(function (customer) {
+        const row = customerTable.insertRow();
+        const nameCell = row.insertCell();
+        const emailCell = row.insertCell();
+        nameCell.textContent = customer.name;
+        emailCell.textContent = customer.email;
+      });
+      customerTable.style.color = 'red';
+    }
+
+    // Function to store customer data in MySQL (Backend implementation required)
+    function storeCustomerData(name, email) {
+      // Backend implementation to store data in MySQL
+      console.log(`Storing customer data:\nName: ${name}\nEmail: ${email}`);
+    }
+  </script>
+</body>
+</html>
